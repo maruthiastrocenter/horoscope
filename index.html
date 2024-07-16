@@ -1,0 +1,1449 @@
+<html class="no-js" lang="" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <title>Horoscope table generator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="">
+
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <meta name="theme-color" content="#fafafa">
+
+
+    <script src="js/app.js"></script>
+
+    <style>
+        .hide {
+            display: none;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .laknam-highlight {
+            color: red;
+        }
+
+        .yellow-background {
+            background-color: yellow;
+        }
+
+        table#entry-table,
+        table#output-table,
+        table#transition-table{
+            border-collapse: collapse;
+            font-family: "Arial Black", sans-serif;
+        }
+
+        colgroup, tbody {
+            border: solid medium;
+        }
+
+        table#entry-table td,
+        table#transition-table td,
+        table#output-table td {
+            border: solid thin;
+            height: 5em;
+            width: 5em;
+            text-align: center;
+            padding: 0;
+        }
+        table#thri-suniayam-table{
+            height: 5em;
+        }
+        table#thri-suniayam-table td{
+            border: solid thin;
+            height: 2em;
+            width: 10em;
+            text-align: center;
+            padding: 0;
+        }
+        table#thri-suniayam-table th{
+            height: 2em;
+            border: solid thin;
+            text-align: center;
+            padding: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-family: Calibri, sans-serif;
+        }
+
+        .select-center {
+            display: flex;
+            align-content: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px
+        }
+
+        table td {
+            border: solid thin;
+            height: 1em;
+            width: 2em;
+            text-align: center;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<div class="modal" tabindex="-1" id="modelDialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Horoscope</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="horoscope-key-elements">
+                    <label for="horoscopeInputKey" class="form-label">Enter Horoscope key :</label>
+                    <input type="password" class="form-control" id="horoscopeInputKey" placeholder="**************">
+                </div>
+                <div class="horoscope-name-elements hide">
+                    <label for="horoscopeNameKey" class="form-label">Enter Horoscope name to be saved :</label>
+                    <input type="text" class="form-control" id="horoscopeNameKey" placeholder="name">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="horoscope-key-elements">
+                    <button id="load-horoscope" type="button" class="btn btn-primary" data-bs-dismiss="modal">Load
+                    </button>
+                </div>
+                <div class="horoscope-name-elements hide">
+                    <button id="save-horoscope-button" type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                        Save
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<h1 style="text-align: center">Horoscope table generator </h1>
+
+<div style="display: flex;
+align-content: center;
+justify-content: center;
+flex-wrap: wrap;
+gap: 50px;
+padding :20px;">
+    <button id="horoscope-new" class="btn btn-info">New</button>
+    <button id="horoscope-open" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modelDialog">Open
+    </button>
+    <button id="horoscope-save" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modelDialog">Save
+    </button>
+    <button id="horoscope-clear" class="btn btn-danger">Clear</button>
+</div>
+
+<div id="horoscope-selector-div" class="select-center hidden">
+    <select style="width: 60%" id="horoscope-selector" class="form-select" aria-label="Horoscope selector">
+    <option selected value=0>Select Horoscope</option>
+    </select>
+</div>
+
+
+<div id="horoscope-table-collections" style="display: flex;
+    flex-wrap: wrap;
+    gap: 50px;">
+
+    <table id="entry-table">
+        <caption>Enter horoscope</caption>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <tbody id="entry-table-body">
+        <tr>
+            <td data-index="12" contenteditable="true">
+            <td data-index="1" contenteditable="true">
+            <td data-index="2" contenteditable="true">
+            <td data-index="3" contenteditable="true">
+        <tr>
+            <td data-index="11" contenteditable="true"></td>
+            <td style="border: none">
+            <td style="border: none">
+            <td data-index="4" contenteditable="true">
+        <tr>
+            <td data-index="10" contenteditable="true">
+            <td style="border: none">
+            <td style="border: none">
+            <td data-index="5" contenteditable="true">
+        <tr>
+            <td data-index="9" contenteditable="true">
+            <td data-index="8" contenteditable="true">
+            <td data-index="7" contenteditable="true">
+            <td data-index="6" contenteditable="true">
+    </table>
+
+    <table id="output-table">
+        <caption>Output horoscope</caption>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <tbody>
+        <tr>
+            <td data-index="12">
+            <td data-index="1">
+            <td data-index="2">
+            <td data-index="3">
+        <tr>
+            <td data-index="11"></td>
+            <td style="border: none" data-index="super-3-god-value">
+            <td style="border: none">
+            <td data-index="4">
+        <tr>
+            <td data-index="10">
+            <td style="border: none" data-index="super-3-god-total-value">
+            <td style="border: none">
+            <td data-index="5">
+        <tr>
+            <td data-index="9">
+            <td data-index="8">
+            <td data-index="7">
+            <td data-index="6">
+    </table>
+
+    <table id="transition-table">
+        <caption>Transition</caption>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+        <tbody>
+        <tr>
+            <td data-index="12">
+            <td data-index="1">
+            <td data-index="2">
+            <td data-index="3">
+        <tr>
+            <td data-index="11"></td>
+            <td style="border: none">
+            <td style="border: none">
+            <td data-index="4">
+        <tr>
+            <td data-index="10">
+            <td style="border: none">
+            <td style="border: none">
+            <td data-index="5">
+        <tr>
+            <td data-index="9">
+            <td data-index="8">
+            <td data-index="7">
+            <td data-index="6">
+    </table>
+
+
+
+    <table id="thri-suniayam-table">
+        <tbody id="thri-suniayam">
+        <th colspan="2">
+            திதி சூனியம்
+        </th>
+        <tr>
+            <td id="thri-suniayam-input" contenteditable="true">
+            <td id="thri-suniayam-result">
+        </tr>
+        <th colspan="2">
+            முடக்கு நட்சத்திரம் & ராசி
+        </th>
+        <tr>
+            <td id="mudaku-nachatram-input" contenteditable="true">
+            <td id="mudaku-nachatram-result">
+        </tr>
+    </table>
+</div>
+
+
+<div id="horoscope-output-collection" style="display: flex; flex-wrap: wrap; gap: 20px;">
+    <div>
+        <h2 id="entry1-finaloutput"> output 1: </h2>
+        <table id="entry1-table">
+            <tbody>
+            <tr>
+                <td class="title"> +</td>
+                <td class="title">மே</td>
+                <td class="title">ரிஷ</td>
+                <td class="title">மிது</td>
+                <td class="title">கட</td>
+                <td class="title">சிம்</td>
+                <td class="title">கன்</td>
+                <td class="title">துலா</td>
+                <td class="title">விரு</td>
+                <td class="title">தனு</td>
+                <td class="title">மக</td>
+                <td class="title">கும்</td>
+                <td class="title">மீன</td>
+            </tr>
+            <tr>
+                <td class="title"> சூரி</td>
+                <td data-index='entry1-1-1'></td>
+                <td data-index='entry1-1-2'></td>
+                <td data-index='entry1-1-3'></td>
+                <td data-index='entry1-1-4'></td>
+                <td data-index='entry1-1-5'></td>
+                <td data-index='entry1-1-6'></td>
+                <td data-index='entry1-1-7'></td>
+                <td data-index='entry1-1-8'></td>
+                <td data-index='entry1-1-9'></td>
+                <td data-index='entry1-1-10'></td>
+                <td data-index='entry1-1-11'></td>
+                <td data-index='entry1-1-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சந்</td>
+                <td data-index='entry1-2-1'></td>
+                <td data-index='entry1-2-2'></td>
+                <td data-index='entry1-2-3'></td>
+                <td data-index='entry1-2-4'></td>
+                <td data-index='entry1-2-5'></td>
+                <td data-index='entry1-2-6'></td>
+                <td data-index='entry1-2-7'></td>
+                <td data-index='entry1-2-8'></td>
+                <td data-index='entry1-2-9'></td>
+                <td data-index='entry1-2-10'></td>
+                <td data-index='entry1-2-11'></td>
+                <td data-index='entry1-2-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> செவ்</td>
+                <td data-index='entry1-3-1'></td>
+                <td data-index='entry1-3-2'></td>
+                <td data-index='entry1-3-3'></td>
+                <td data-index='entry1-3-4'></td>
+                <td data-index='entry1-3-5'></td>
+                <td data-index='entry1-3-6'></td>
+                <td data-index='entry1-3-7'></td>
+                <td data-index='entry1-3-8'></td>
+                <td data-index='entry1-3-9'></td>
+                <td data-index='entry1-3-10'></td>
+                <td data-index='entry1-3-11'></td>
+                <td data-index='entry1-3-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> புத</td>
+                <td data-index='entry1-4-1'></td>
+                <td data-index='entry1-4-2'></td>
+                <td data-index='entry1-4-3'></td>
+                <td data-index='entry1-4-4'></td>
+                <td data-index='entry1-4-5'></td>
+                <td data-index='entry1-4-6'></td>
+                <td data-index='entry1-4-7'></td>
+                <td data-index='entry1-4-8'></td>
+                <td data-index='entry1-4-9'></td>
+                <td data-index='entry1-4-10'></td>
+                <td data-index='entry1-4-11'></td>
+                <td data-index='entry1-4-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> குரு</td>
+                <td data-index='entry1-5-1'></td>
+                <td data-index='entry1-5-2'></td>
+                <td data-index='entry1-5-3'></td>
+                <td data-index='entry1-5-4'></td>
+                <td data-index='entry1-5-5'></td>
+                <td data-index='entry1-5-6'></td>
+                <td data-index='entry1-5-7'></td>
+                <td data-index='entry1-5-8'></td>
+                <td data-index='entry1-5-9'></td>
+                <td data-index='entry1-5-10'></td>
+                <td data-index='entry1-5-11'></td>
+                <td data-index='entry1-5-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சுக்</td>
+                <td data-index='entry1-6-1'></td>
+                <td data-index='entry1-6-2'></td>
+                <td data-index='entry1-6-3'></td>
+                <td data-index='entry1-6-4'></td>
+                <td data-index='entry1-6-5'></td>
+                <td data-index='entry1-6-6'></td>
+                <td data-index='entry1-6-7'></td>
+                <td data-index='entry1-6-8'></td>
+                <td data-index='entry1-6-9'></td>
+                <td data-index='entry1-6-10'></td>
+                <td data-index='entry1-6-11'></td>
+                <td data-index='entry1-6-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சனி</td>
+                <td data-index='entry1-7-1'></td>
+                <td data-index='entry1-7-2'></td>
+                <td data-index='entry1-7-3'></td>
+                <td data-index='entry1-7-4'></td>
+                <td data-index='entry1-7-5'></td>
+                <td data-index='entry1-7-6'></td>
+                <td data-index='entry1-7-7'></td>
+                <td data-index='entry1-7-8'></td>
+                <td data-index='entry1-7-9'></td>
+                <td data-index='entry1-7-10'></td>
+                <td data-index='entry1-7-11'></td>
+                <td data-index='entry1-7-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> லக்</td>
+                <td data-index='entry1-8-1'></td>
+                <td data-index='entry1-8-2'></td>
+                <td data-index='entry1-8-3'></td>
+                <td data-index='entry1-8-4'></td>
+                <td data-index='entry1-8-5'></td>
+                <td data-index='entry1-8-6'></td>
+                <td data-index='entry1-8-7'></td>
+                <td data-index='entry1-8-8'></td>
+                <td data-index='entry1-8-9'></td>
+                <td data-index='entry1-8-10'></td>
+                <td data-index='entry1-8-11'></td>
+                <td data-index='entry1-8-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> =</td>
+                <td data-index='entry1-total-1'></td>
+                <td data-index='entry1-total-2'></td>
+                <td data-index='entry1-total-3'></td>
+                <td data-index='entry1-total-4'></td>
+                <td data-index='entry1-total-5'></td>
+                <td data-index='entry1-total-6'></td>
+                <td data-index='entry1-total-7'></td>
+                <td data-index='entry1-total-8'></td>
+                <td data-index='entry1-total-9'></td>
+                <td data-index='entry1-total-10'></td>
+                <td data-index='entry1-total-11'></td>
+                <td data-index='entry1-total-12'></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div>
+        <h2 id="entry2-finaloutput"> output 2: </h2>
+        <table id="entry2-table">
+            <tbody>
+            <tr>
+                <td class="title"> +</td>
+                <td class="title">மே</td>
+                <td class="title">ரிஷ</td>
+                <td class="title">மிது</td>
+                <td class="title">கட</td>
+                <td class="title">சிம்</td>
+                <td class="title">கன்</td>
+                <td class="title">துலா</td>
+                <td class="title">விரு</td>
+                <td class="title">தனு</td>
+                <td class="title">மக</td>
+                <td class="title">கும்</td>
+                <td class="title">மீன</td>
+            </tr>
+            <tr>
+                <td class="title"> சூரி</td>
+                <td data-index='entry2-1-1'></td>
+                <td data-index='entry2-1-2'></td>
+                <td data-index='entry2-1-3'></td>
+                <td data-index='entry2-1-4'></td>
+                <td data-index='entry2-1-5'></td>
+                <td data-index='entry2-1-6'></td>
+                <td data-index='entry2-1-7'></td>
+                <td data-index='entry2-1-8'></td>
+                <td data-index='entry2-1-9'></td>
+                <td data-index='entry2-1-10'></td>
+                <td data-index='entry2-1-11'></td>
+                <td data-index='entry2-1-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சந்</td>
+                <td data-index='entry2-2-1'></td>
+                <td data-index='entry2-2-2'></td>
+                <td data-index='entry2-2-3'></td>
+                <td data-index='entry2-2-4'></td>
+                <td data-index='entry2-2-5'></td>
+                <td data-index='entry2-2-6'></td>
+                <td data-index='entry2-2-7'></td>
+                <td data-index='entry2-2-8'></td>
+                <td data-index='entry2-2-9'></td>
+                <td data-index='entry2-2-10'></td>
+                <td data-index='entry2-2-11'></td>
+                <td data-index='entry2-2-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> செவ்</td>
+                <td data-index='entry2-3-1'></td>
+                <td data-index='entry2-3-2'></td>
+                <td data-index='entry2-3-3'></td>
+                <td data-index='entry2-3-4'></td>
+                <td data-index='entry2-3-5'></td>
+                <td data-index='entry2-3-6'></td>
+                <td data-index='entry2-3-7'></td>
+                <td data-index='entry2-3-8'></td>
+                <td data-index='entry2-3-9'></td>
+                <td data-index='entry2-3-10'></td>
+                <td data-index='entry2-3-11'></td>
+                <td data-index='entry2-3-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> புத</td>
+                <td data-index='entry2-4-1'></td>
+                <td data-index='entry2-4-2'></td>
+                <td data-index='entry2-4-3'></td>
+                <td data-index='entry2-4-4'></td>
+                <td data-index='entry2-4-5'></td>
+                <td data-index='entry2-4-6'></td>
+                <td data-index='entry2-4-7'></td>
+                <td data-index='entry2-4-8'></td>
+                <td data-index='entry2-4-9'></td>
+                <td data-index='entry2-4-10'></td>
+                <td data-index='entry2-4-11'></td>
+                <td data-index='entry2-4-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> குரு</td>
+                <td data-index='entry2-5-1'></td>
+                <td data-index='entry2-5-2'></td>
+                <td data-index='entry2-5-3'></td>
+                <td data-index='entry2-5-4'></td>
+                <td data-index='entry2-5-5'></td>
+                <td data-index='entry2-5-6'></td>
+                <td data-index='entry2-5-7'></td>
+                <td data-index='entry2-5-8'></td>
+                <td data-index='entry2-5-9'></td>
+                <td data-index='entry2-5-10'></td>
+                <td data-index='entry2-5-11'></td>
+                <td data-index='entry2-5-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சுக்</td>
+                <td data-index='entry2-6-1'></td>
+                <td data-index='entry2-6-2'></td>
+                <td data-index='entry2-6-3'></td>
+                <td data-index='entry2-6-4'></td>
+                <td data-index='entry2-6-5'></td>
+                <td data-index='entry2-6-6'></td>
+                <td data-index='entry2-6-7'></td>
+                <td data-index='entry2-6-8'></td>
+                <td data-index='entry2-6-9'></td>
+                <td data-index='entry2-6-10'></td>
+                <td data-index='entry2-6-11'></td>
+                <td data-index='entry2-6-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சனி</td>
+                <td data-index='entry2-7-1'></td>
+                <td data-index='entry2-7-2'></td>
+                <td data-index='entry2-7-3'></td>
+                <td data-index='entry2-7-4'></td>
+                <td data-index='entry2-7-5'></td>
+                <td data-index='entry2-7-6'></td>
+                <td data-index='entry2-7-7'></td>
+                <td data-index='entry2-7-8'></td>
+                <td data-index='entry2-7-9'></td>
+                <td data-index='entry2-7-10'></td>
+                <td data-index='entry2-7-11'></td>
+                <td data-index='entry2-7-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> லக்</td>
+                <td data-index='entry2-8-1'></td>
+                <td data-index='entry2-8-2'></td>
+                <td data-index='entry2-8-3'></td>
+                <td data-index='entry2-8-4'></td>
+                <td data-index='entry2-8-5'></td>
+                <td data-index='entry2-8-6'></td>
+                <td data-index='entry2-8-7'></td>
+                <td data-index='entry2-8-8'></td>
+                <td data-index='entry2-8-9'></td>
+                <td data-index='entry2-8-10'></td>
+                <td data-index='entry2-8-11'></td>
+                <td data-index='entry2-8-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> =</td>
+                <td data-index='entry2-total-1'></td>
+                <td data-index='entry2-total-2'></td>
+                <td data-index='entry2-total-3'></td>
+                <td data-index='entry2-total-4'></td>
+                <td data-index='entry2-total-5'></td>
+                <td data-index='entry2-total-6'></td>
+                <td data-index='entry2-total-7'></td>
+                <td data-index='entry2-total-8'></td>
+                <td data-index='entry2-total-9'></td>
+                <td data-index='entry2-total-10'></td>
+                <td data-index='entry2-total-11'></td>
+                <td data-index='entry2-total-12'></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div>
+        <h2 id="entry3-finaloutput"> output 3: </h2>
+        <table id="entry3-table">
+            <tbody>
+            <tr>
+                <td class="title"> +</td>
+                <td class="title">மே</td>
+                <td class="title">ரிஷ</td>
+                <td class="title">மிது</td>
+                <td class="title">கட</td>
+                <td class="title">சிம்</td>
+                <td class="title">கன்</td>
+                <td class="title">துலா</td>
+                <td class="title">விரு</td>
+                <td class="title">தனு</td>
+                <td class="title">மக</td>
+                <td class="title">கும்</td>
+                <td class="title">மீன</td>
+            </tr>
+            <tr>
+                <td class="title"> சூரி</td>
+                <td data-index='entry3-1-1'></td>
+                <td data-index='entry3-1-2'></td>
+                <td data-index='entry3-1-3'></td>
+                <td data-index='entry3-1-4'></td>
+                <td data-index='entry3-1-5'></td>
+                <td data-index='entry3-1-6'></td>
+                <td data-index='entry3-1-7'></td>
+                <td data-index='entry3-1-8'></td>
+                <td data-index='entry3-1-9'></td>
+                <td data-index='entry3-1-10'></td>
+                <td data-index='entry3-1-11'></td>
+                <td data-index='entry3-1-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சந்</td>
+                <td data-index='entry3-2-1'></td>
+                <td data-index='entry3-2-2'></td>
+                <td data-index='entry3-2-3'></td>
+                <td data-index='entry3-2-4'></td>
+                <td data-index='entry3-2-5'></td>
+                <td data-index='entry3-2-6'></td>
+                <td data-index='entry3-2-7'></td>
+                <td data-index='entry3-2-8'></td>
+                <td data-index='entry3-2-9'></td>
+                <td data-index='entry3-2-10'></td>
+                <td data-index='entry3-2-11'></td>
+                <td data-index='entry3-2-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> செவ்</td>
+                <td data-index='entry3-3-1'></td>
+                <td data-index='entry3-3-2'></td>
+                <td data-index='entry3-3-3'></td>
+                <td data-index='entry3-3-4'></td>
+                <td data-index='entry3-3-5'></td>
+                <td data-index='entry3-3-6'></td>
+                <td data-index='entry3-3-7'></td>
+                <td data-index='entry3-3-8'></td>
+                <td data-index='entry3-3-9'></td>
+                <td data-index='entry3-3-10'></td>
+                <td data-index='entry3-3-11'></td>
+                <td data-index='entry3-3-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> புத</td>
+                <td data-index='entry3-4-1'></td>
+                <td data-index='entry3-4-2'></td>
+                <td data-index='entry3-4-3'></td>
+                <td data-index='entry3-4-4'></td>
+                <td data-index='entry3-4-5'></td>
+                <td data-index='entry3-4-6'></td>
+                <td data-index='entry3-4-7'></td>
+                <td data-index='entry3-4-8'></td>
+                <td data-index='entry3-4-9'></td>
+                <td data-index='entry3-4-10'></td>
+                <td data-index='entry3-4-11'></td>
+                <td data-index='entry3-4-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> குரு</td>
+                <td data-index='entry3-5-1'></td>
+                <td data-index='entry3-5-2'></td>
+                <td data-index='entry3-5-3'></td>
+                <td data-index='entry3-5-4'></td>
+                <td data-index='entry3-5-5'></td>
+                <td data-index='entry3-5-6'></td>
+                <td data-index='entry3-5-7'></td>
+                <td data-index='entry3-5-8'></td>
+                <td data-index='entry3-5-9'></td>
+                <td data-index='entry3-5-10'></td>
+                <td data-index='entry3-5-11'></td>
+                <td data-index='entry3-5-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சுக்</td>
+                <td data-index='entry3-6-1'></td>
+                <td data-index='entry3-6-2'></td>
+                <td data-index='entry3-6-3'></td>
+                <td data-index='entry3-6-4'></td>
+                <td data-index='entry3-6-5'></td>
+                <td data-index='entry3-6-6'></td>
+                <td data-index='entry3-6-7'></td>
+                <td data-index='entry3-6-8'></td>
+                <td data-index='entry3-6-9'></td>
+                <td data-index='entry3-6-10'></td>
+                <td data-index='entry3-6-11'></td>
+                <td data-index='entry3-6-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சனி</td>
+                <td data-index='entry3-7-1'></td>
+                <td data-index='entry3-7-2'></td>
+                <td data-index='entry3-7-3'></td>
+                <td data-index='entry3-7-4'></td>
+                <td data-index='entry3-7-5'></td>
+                <td data-index='entry3-7-6'></td>
+                <td data-index='entry3-7-7'></td>
+                <td data-index='entry3-7-8'></td>
+                <td data-index='entry3-7-9'></td>
+                <td data-index='entry3-7-10'></td>
+                <td data-index='entry3-7-11'></td>
+                <td data-index='entry3-7-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> லக்</td>
+                <td data-index='entry3-8-1'></td>
+                <td data-index='entry3-8-2'></td>
+                <td data-index='entry3-8-3'></td>
+                <td data-index='entry3-8-4'></td>
+                <td data-index='entry3-8-5'></td>
+                <td data-index='entry3-8-6'></td>
+                <td data-index='entry3-8-7'></td>
+                <td data-index='entry3-8-8'></td>
+                <td data-index='entry3-8-9'></td>
+                <td data-index='entry3-8-10'></td>
+                <td data-index='entry3-8-11'></td>
+                <td data-index='entry3-8-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> =</td>
+                <td data-index='entry3-total-1'></td>
+                <td data-index='entry3-total-2'></td>
+                <td data-index='entry3-total-3'></td>
+                <td data-index='entry3-total-4'></td>
+                <td data-index='entry3-total-5'></td>
+                <td data-index='entry3-total-6'></td>
+                <td data-index='entry3-total-7'></td>
+                <td data-index='entry3-total-8'></td>
+                <td data-index='entry3-total-9'></td>
+                <td data-index='entry3-total-10'></td>
+                <td data-index='entry3-total-11'></td>
+                <td data-index='entry3-total-12'></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div>
+        <h2 id="entry4-finaloutput"> output 4: </h2>
+        <table id="entry4-table">
+            <tbody>
+            <tr>
+                <td class="title"> +</td>
+                <td class="title">மே</td>
+                <td class="title">ரிஷ</td>
+                <td class="title">மிது</td>
+                <td class="title">கட</td>
+                <td class="title">சிம்</td>
+                <td class="title">கன்</td>
+                <td class="title">துலா</td>
+                <td class="title">விரு</td>
+                <td class="title">தனு</td>
+                <td class="title">மக</td>
+                <td class="title">கும்</td>
+                <td class="title">மீன</td>
+            </tr>
+            <tr>
+                <td class="title"> சூரி</td>
+                <td data-index='entry4-1-1'></td>
+                <td data-index='entry4-1-2'></td>
+                <td data-index='entry4-1-3'></td>
+                <td data-index='entry4-1-4'></td>
+                <td data-index='entry4-1-5'></td>
+                <td data-index='entry4-1-6'></td>
+                <td data-index='entry4-1-7'></td>
+                <td data-index='entry4-1-8'></td>
+                <td data-index='entry4-1-9'></td>
+                <td data-index='entry4-1-10'></td>
+                <td data-index='entry4-1-11'></td>
+                <td data-index='entry4-1-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சந்</td>
+                <td data-index='entry4-2-1'></td>
+                <td data-index='entry4-2-2'></td>
+                <td data-index='entry4-2-3'></td>
+                <td data-index='entry4-2-4'></td>
+                <td data-index='entry4-2-5'></td>
+                <td data-index='entry4-2-6'></td>
+                <td data-index='entry4-2-7'></td>
+                <td data-index='entry4-2-8'></td>
+                <td data-index='entry4-2-9'></td>
+                <td data-index='entry4-2-10'></td>
+                <td data-index='entry4-2-11'></td>
+                <td data-index='entry4-2-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> செவ்</td>
+                <td data-index='entry4-3-1'></td>
+                <td data-index='entry4-3-2'></td>
+                <td data-index='entry4-3-3'></td>
+                <td data-index='entry4-3-4'></td>
+                <td data-index='entry4-3-5'></td>
+                <td data-index='entry4-3-6'></td>
+                <td data-index='entry4-3-7'></td>
+                <td data-index='entry4-3-8'></td>
+                <td data-index='entry4-3-9'></td>
+                <td data-index='entry4-3-10'></td>
+                <td data-index='entry4-3-11'></td>
+                <td data-index='entry4-3-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> புத</td>
+                <td data-index='entry4-4-1'></td>
+                <td data-index='entry4-4-2'></td>
+                <td data-index='entry4-4-3'></td>
+                <td data-index='entry4-4-4'></td>
+                <td data-index='entry4-4-5'></td>
+                <td data-index='entry4-4-6'></td>
+                <td data-index='entry4-4-7'></td>
+                <td data-index='entry4-4-8'></td>
+                <td data-index='entry4-4-9'></td>
+                <td data-index='entry4-4-10'></td>
+                <td data-index='entry4-4-11'></td>
+                <td data-index='entry4-4-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> குரு</td>
+                <td data-index='entry4-5-1'></td>
+                <td data-index='entry4-5-2'></td>
+                <td data-index='entry4-5-3'></td>
+                <td data-index='entry4-5-4'></td>
+                <td data-index='entry4-5-5'></td>
+                <td data-index='entry4-5-6'></td>
+                <td data-index='entry4-5-7'></td>
+                <td data-index='entry4-5-8'></td>
+                <td data-index='entry4-5-9'></td>
+                <td data-index='entry4-5-10'></td>
+                <td data-index='entry4-5-11'></td>
+                <td data-index='entry4-5-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சுக்</td>
+                <td data-index='entry4-6-1'></td>
+                <td data-index='entry4-6-2'></td>
+                <td data-index='entry4-6-3'></td>
+                <td data-index='entry4-6-4'></td>
+                <td data-index='entry4-6-5'></td>
+                <td data-index='entry4-6-6'></td>
+                <td data-index='entry4-6-7'></td>
+                <td data-index='entry4-6-8'></td>
+                <td data-index='entry4-6-9'></td>
+                <td data-index='entry4-6-10'></td>
+                <td data-index='entry4-6-11'></td>
+                <td data-index='entry4-6-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சனி</td>
+                <td data-index='entry4-7-1'></td>
+                <td data-index='entry4-7-2'></td>
+                <td data-index='entry4-7-3'></td>
+                <td data-index='entry4-7-4'></td>
+                <td data-index='entry4-7-5'></td>
+                <td data-index='entry4-7-6'></td>
+                <td data-index='entry4-7-7'></td>
+                <td data-index='entry4-7-8'></td>
+                <td data-index='entry4-7-9'></td>
+                <td data-index='entry4-7-10'></td>
+                <td data-index='entry4-7-11'></td>
+                <td data-index='entry4-7-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> லக்</td>
+                <td data-index='entry4-8-1'></td>
+                <td data-index='entry4-8-2'></td>
+                <td data-index='entry4-8-3'></td>
+                <td data-index='entry4-8-4'></td>
+                <td data-index='entry4-8-5'></td>
+                <td data-index='entry4-8-6'></td>
+                <td data-index='entry4-8-7'></td>
+                <td data-index='entry4-8-8'></td>
+                <td data-index='entry4-8-9'></td>
+                <td data-index='entry4-8-10'></td>
+                <td data-index='entry4-8-11'></td>
+                <td data-index='entry4-8-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> =</td>
+                <td data-index='entry4-total-1'></td>
+                <td data-index='entry4-total-2'></td>
+                <td data-index='entry4-total-3'></td>
+                <td data-index='entry4-total-4'></td>
+                <td data-index='entry4-total-5'></td>
+                <td data-index='entry4-total-6'></td>
+                <td data-index='entry4-total-7'></td>
+                <td data-index='entry4-total-8'></td>
+                <td data-index='entry4-total-9'></td>
+                <td data-index='entry4-total-10'></td>
+                <td data-index='entry4-total-11'></td>
+                <td data-index='entry4-total-12'></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div>
+        <h2 id="entry5-finaloutput"> output 5: </h2>
+        <table id="entry5-table">
+            <tbody>
+            <tr>
+                <td class="title"> +</td>
+                <td class="title">மே</td>
+                <td class="title">ரிஷ</td>
+                <td class="title">மிது</td>
+                <td class="title">கட</td>
+                <td class="title">சிம்</td>
+                <td class="title">கன்</td>
+                <td class="title">துலா</td>
+                <td class="title">விரு</td>
+                <td class="title">தனு</td>
+                <td class="title">மக</td>
+                <td class="title">கும்</td>
+                <td class="title">மீன</td>
+            </tr>
+            <tr>
+                <td class="title"> சூரி</td>
+                <td data-index='entry5-1-1'></td>
+                <td data-index='entry5-1-2'></td>
+                <td data-index='entry5-1-3'></td>
+                <td data-index='entry5-1-4'></td>
+                <td data-index='entry5-1-5'></td>
+                <td data-index='entry5-1-6'></td>
+                <td data-index='entry5-1-7'></td>
+                <td data-index='entry5-1-8'></td>
+                <td data-index='entry5-1-9'></td>
+                <td data-index='entry5-1-10'></td>
+                <td data-index='entry5-1-11'></td>
+                <td data-index='entry5-1-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சந்</td>
+                <td data-index='entry5-2-1'></td>
+                <td data-index='entry5-2-2'></td>
+                <td data-index='entry5-2-3'></td>
+                <td data-index='entry5-2-4'></td>
+                <td data-index='entry5-2-5'></td>
+                <td data-index='entry5-2-6'></td>
+                <td data-index='entry5-2-7'></td>
+                <td data-index='entry5-2-8'></td>
+                <td data-index='entry5-2-9'></td>
+                <td data-index='entry5-2-10'></td>
+                <td data-index='entry5-2-11'></td>
+                <td data-index='entry5-2-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> செவ்</td>
+                <td data-index='entry5-3-1'></td>
+                <td data-index='entry5-3-2'></td>
+                <td data-index='entry5-3-3'></td>
+                <td data-index='entry5-3-4'></td>
+                <td data-index='entry5-3-5'></td>
+                <td data-index='entry5-3-6'></td>
+                <td data-index='entry5-3-7'></td>
+                <td data-index='entry5-3-8'></td>
+                <td data-index='entry5-3-9'></td>
+                <td data-index='entry5-3-10'></td>
+                <td data-index='entry5-3-11'></td>
+                <td data-index='entry5-3-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> புத</td>
+                <td data-index='entry5-4-1'></td>
+                <td data-index='entry5-4-2'></td>
+                <td data-index='entry5-4-3'></td>
+                <td data-index='entry5-4-4'></td>
+                <td data-index='entry5-4-5'></td>
+                <td data-index='entry5-4-6'></td>
+                <td data-index='entry5-4-7'></td>
+                <td data-index='entry5-4-8'></td>
+                <td data-index='entry5-4-9'></td>
+                <td data-index='entry5-4-10'></td>
+                <td data-index='entry5-4-11'></td>
+                <td data-index='entry5-4-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> குரு</td>
+                <td data-index='entry5-5-1'></td>
+                <td data-index='entry5-5-2'></td>
+                <td data-index='entry5-5-3'></td>
+                <td data-index='entry5-5-4'></td>
+                <td data-index='entry5-5-5'></td>
+                <td data-index='entry5-5-6'></td>
+                <td data-index='entry5-5-7'></td>
+                <td data-index='entry5-5-8'></td>
+                <td data-index='entry5-5-9'></td>
+                <td data-index='entry5-5-10'></td>
+                <td data-index='entry5-5-11'></td>
+                <td data-index='entry5-5-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சுக்</td>
+                <td data-index='entry5-6-1'></td>
+                <td data-index='entry5-6-2'></td>
+                <td data-index='entry5-6-3'></td>
+                <td data-index='entry5-6-4'></td>
+                <td data-index='entry5-6-5'></td>
+                <td data-index='entry5-6-6'></td>
+                <td data-index='entry5-6-7'></td>
+                <td data-index='entry5-6-8'></td>
+                <td data-index='entry5-6-9'></td>
+                <td data-index='entry5-6-10'></td>
+                <td data-index='entry5-6-11'></td>
+                <td data-index='entry5-6-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சனி</td>
+                <td data-index='entry5-7-1'></td>
+                <td data-index='entry5-7-2'></td>
+                <td data-index='entry5-7-3'></td>
+                <td data-index='entry5-7-4'></td>
+                <td data-index='entry5-7-5'></td>
+                <td data-index='entry5-7-6'></td>
+                <td data-index='entry5-7-7'></td>
+                <td data-index='entry5-7-8'></td>
+                <td data-index='entry5-7-9'></td>
+                <td data-index='entry5-7-10'></td>
+                <td data-index='entry5-7-11'></td>
+                <td data-index='entry5-7-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> லக்</td>
+                <td data-index='entry5-8-1'></td>
+                <td data-index='entry5-8-2'></td>
+                <td data-index='entry5-8-3'></td>
+                <td data-index='entry5-8-4'></td>
+                <td data-index='entry5-8-5'></td>
+                <td data-index='entry5-8-6'></td>
+                <td data-index='entry5-8-7'></td>
+                <td data-index='entry5-8-8'></td>
+                <td data-index='entry5-8-9'></td>
+                <td data-index='entry5-8-10'></td>
+                <td data-index='entry5-8-11'></td>
+                <td data-index='entry5-8-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> =</td>
+                <td data-index='entry5-total-1'></td>
+                <td data-index='entry5-total-2'></td>
+                <td data-index='entry5-total-3'></td>
+                <td data-index='entry5-total-4'></td>
+                <td data-index='entry5-total-5'></td>
+                <td data-index='entry5-total-6'></td>
+                <td data-index='entry5-total-7'></td>
+                <td data-index='entry5-total-8'></td>
+                <td data-index='entry5-total-9'></td>
+                <td data-index='entry5-total-10'></td>
+                <td data-index='entry5-total-11'></td>
+                <td data-index='entry5-total-12'></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div>
+        <h2 id="entry6-finaloutput"> output 6: </h2>
+        <table id="entry6-table">
+            <tbody>
+            <tr>
+                <td class="title"> +</td>
+                <td class="title">மே</td>
+                <td class="title">ரிஷ</td>
+                <td class="title">மிது</td>
+                <td class="title">கட</td>
+                <td class="title">சிம்</td>
+                <td class="title">கன்</td>
+                <td class="title">துலா</td>
+                <td class="title">விரு</td>
+                <td class="title">தனு</td>
+                <td class="title">மக</td>
+                <td class="title">கும்</td>
+                <td class="title">மீன</td>
+            </tr>
+            <tr>
+                <td class="title"> சூரி</td>
+                <td data-index='entry6-1-1'></td>
+                <td data-index='entry6-1-2'></td>
+                <td data-index='entry6-1-3'></td>
+                <td data-index='entry6-1-4'></td>
+                <td data-index='entry6-1-5'></td>
+                <td data-index='entry6-1-6'></td>
+                <td data-index='entry6-1-7'></td>
+                <td data-index='entry6-1-8'></td>
+                <td data-index='entry6-1-9'></td>
+                <td data-index='entry6-1-10'></td>
+                <td data-index='entry6-1-11'></td>
+                <td data-index='entry6-1-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சந்</td>
+                <td data-index='entry6-2-1'></td>
+                <td data-index='entry6-2-2'></td>
+                <td data-index='entry6-2-3'></td>
+                <td data-index='entry6-2-4'></td>
+                <td data-index='entry6-2-5'></td>
+                <td data-index='entry6-2-6'></td>
+                <td data-index='entry6-2-7'></td>
+                <td data-index='entry6-2-8'></td>
+                <td data-index='entry6-2-9'></td>
+                <td data-index='entry6-2-10'></td>
+                <td data-index='entry6-2-11'></td>
+                <td data-index='entry6-2-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> செவ்</td>
+                <td data-index='entry6-3-1'></td>
+                <td data-index='entry6-3-2'></td>
+                <td data-index='entry6-3-3'></td>
+                <td data-index='entry6-3-4'></td>
+                <td data-index='entry6-3-5'></td>
+                <td data-index='entry6-3-6'></td>
+                <td data-index='entry6-3-7'></td>
+                <td data-index='entry6-3-8'></td>
+                <td data-index='entry6-3-9'></td>
+                <td data-index='entry6-3-10'></td>
+                <td data-index='entry6-3-11'></td>
+                <td data-index='entry6-3-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> புத</td>
+                <td data-index='entry6-4-1'></td>
+                <td data-index='entry6-4-2'></td>
+                <td data-index='entry6-4-3'></td>
+                <td data-index='entry6-4-4'></td>
+                <td data-index='entry6-4-5'></td>
+                <td data-index='entry6-4-6'></td>
+                <td data-index='entry6-4-7'></td>
+                <td data-index='entry6-4-8'></td>
+                <td data-index='entry6-4-9'></td>
+                <td data-index='entry6-4-10'></td>
+                <td data-index='entry6-4-11'></td>
+                <td data-index='entry6-4-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> குரு</td>
+                <td data-index='entry6-5-1'></td>
+                <td data-index='entry6-5-2'></td>
+                <td data-index='entry6-5-3'></td>
+                <td data-index='entry6-5-4'></td>
+                <td data-index='entry6-5-5'></td>
+                <td data-index='entry6-5-6'></td>
+                <td data-index='entry6-5-7'></td>
+                <td data-index='entry6-5-8'></td>
+                <td data-index='entry6-5-9'></td>
+                <td data-index='entry6-5-10'></td>
+                <td data-index='entry6-5-11'></td>
+                <td data-index='entry6-5-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சுக்</td>
+                <td data-index='entry6-6-1'></td>
+                <td data-index='entry6-6-2'></td>
+                <td data-index='entry6-6-3'></td>
+                <td data-index='entry6-6-4'></td>
+                <td data-index='entry6-6-5'></td>
+                <td data-index='entry6-6-6'></td>
+                <td data-index='entry6-6-7'></td>
+                <td data-index='entry6-6-8'></td>
+                <td data-index='entry6-6-9'></td>
+                <td data-index='entry6-6-10'></td>
+                <td data-index='entry6-6-11'></td>
+                <td data-index='entry6-6-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சனி</td>
+                <td data-index='entry6-7-1'></td>
+                <td data-index='entry6-7-2'></td>
+                <td data-index='entry6-7-3'></td>
+                <td data-index='entry6-7-4'></td>
+                <td data-index='entry6-7-5'></td>
+                <td data-index='entry6-7-6'></td>
+                <td data-index='entry6-7-7'></td>
+                <td data-index='entry6-7-8'></td>
+                <td data-index='entry6-7-9'></td>
+                <td data-index='entry6-7-10'></td>
+                <td data-index='entry6-7-11'></td>
+                <td data-index='entry6-7-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> லக்</td>
+                <td data-index='entry6-8-1'></td>
+                <td data-index='entry6-8-2'></td>
+                <td data-index='entry6-8-3'></td>
+                <td data-index='entry6-8-4'></td>
+                <td data-index='entry6-8-5'></td>
+                <td data-index='entry6-8-6'></td>
+                <td data-index='entry6-8-7'></td>
+                <td data-index='entry6-8-8'></td>
+                <td data-index='entry6-8-9'></td>
+                <td data-index='entry6-8-10'></td>
+                <td data-index='entry6-8-11'></td>
+                <td data-index='entry6-8-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> =</td>
+                <td data-index='entry6-total-1'></td>
+                <td data-index='entry6-total-2'></td>
+                <td data-index='entry6-total-3'></td>
+                <td data-index='entry6-total-4'></td>
+                <td data-index='entry6-total-5'></td>
+                <td data-index='entry6-total-6'></td>
+                <td data-index='entry6-total-7'></td>
+                <td data-index='entry6-total-8'></td>
+                <td data-index='entry6-total-9'></td>
+                <td data-index='entry6-total-10'></td>
+                <td data-index='entry6-total-11'></td>
+                <td data-index='entry6-total-12'></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div>
+        <h2 id="entry7-finaloutput"> output 7: </h2>
+        <table id="entry7-table">
+            <tbody>
+            <tr>
+                <td class="title"> +</td>
+                <td class="title">மே</td>
+                <td class="title">ரிஷ</td>
+                <td class="title">மிது</td>
+                <td class="title">கட</td>
+                <td class="title">சிம்</td>
+                <td class="title">கன்</td>
+                <td class="title">துலா</td>
+                <td class="title">விரு</td>
+                <td class="title">தனு</td>
+                <td class="title">மக</td>
+                <td class="title">கும்</td>
+                <td class="title">மீன</td>
+            </tr>
+            <tr>
+                <td class="title"> சூரி</td>
+                <td data-index='entry7-1-1'></td>
+                <td data-index='entry7-1-2'></td>
+                <td data-index='entry7-1-3'></td>
+                <td data-index='entry7-1-4'></td>
+                <td data-index='entry7-1-5'></td>
+                <td data-index='entry7-1-6'></td>
+                <td data-index='entry7-1-7'></td>
+                <td data-index='entry7-1-8'></td>
+                <td data-index='entry7-1-9'></td>
+                <td data-index='entry7-1-10'></td>
+                <td data-index='entry7-1-11'></td>
+                <td data-index='entry7-1-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சந்</td>
+                <td data-index='entry7-2-1'></td>
+                <td data-index='entry7-2-2'></td>
+                <td data-index='entry7-2-3'></td>
+                <td data-index='entry7-2-4'></td>
+                <td data-index='entry7-2-5'></td>
+                <td data-index='entry7-2-6'></td>
+                <td data-index='entry7-2-7'></td>
+                <td data-index='entry7-2-8'></td>
+                <td data-index='entry7-2-9'></td>
+                <td data-index='entry7-2-10'></td>
+                <td data-index='entry7-2-11'></td>
+                <td data-index='entry7-2-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> செவ்</td>
+                <td data-index='entry7-3-1'></td>
+                <td data-index='entry7-3-2'></td>
+                <td data-index='entry7-3-3'></td>
+                <td data-index='entry7-3-4'></td>
+                <td data-index='entry7-3-5'></td>
+                <td data-index='entry7-3-6'></td>
+                <td data-index='entry7-3-7'></td>
+                <td data-index='entry7-3-8'></td>
+                <td data-index='entry7-3-9'></td>
+                <td data-index='entry7-3-10'></td>
+                <td data-index='entry7-3-11'></td>
+                <td data-index='entry7-3-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> புத</td>
+                <td data-index='entry7-4-1'></td>
+                <td data-index='entry7-4-2'></td>
+                <td data-index='entry7-4-3'></td>
+                <td data-index='entry7-4-4'></td>
+                <td data-index='entry7-4-5'></td>
+                <td data-index='entry7-4-6'></td>
+                <td data-index='entry7-4-7'></td>
+                <td data-index='entry7-4-8'></td>
+                <td data-index='entry7-4-9'></td>
+                <td data-index='entry7-4-10'></td>
+                <td data-index='entry7-4-11'></td>
+                <td data-index='entry7-4-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> குரு</td>
+                <td data-index='entry7-5-1'></td>
+                <td data-index='entry7-5-2'></td>
+                <td data-index='entry7-5-3'></td>
+                <td data-index='entry7-5-4'></td>
+                <td data-index='entry7-5-5'></td>
+                <td data-index='entry7-5-6'></td>
+                <td data-index='entry7-5-7'></td>
+                <td data-index='entry7-5-8'></td>
+                <td data-index='entry7-5-9'></td>
+                <td data-index='entry7-5-10'></td>
+                <td data-index='entry7-5-11'></td>
+                <td data-index='entry7-5-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சுக்</td>
+                <td data-index='entry7-6-1'></td>
+                <td data-index='entry7-6-2'></td>
+                <td data-index='entry7-6-3'></td>
+                <td data-index='entry7-6-4'></td>
+                <td data-index='entry7-6-5'></td>
+                <td data-index='entry7-6-6'></td>
+                <td data-index='entry7-6-7'></td>
+                <td data-index='entry7-6-8'></td>
+                <td data-index='entry7-6-9'></td>
+                <td data-index='entry7-6-10'></td>
+                <td data-index='entry7-6-11'></td>
+                <td data-index='entry7-6-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> சனி</td>
+                <td data-index='entry7-7-1'></td>
+                <td data-index='entry7-7-2'></td>
+                <td data-index='entry7-7-3'></td>
+                <td data-index='entry7-7-4'></td>
+                <td data-index='entry7-7-5'></td>
+                <td data-index='entry7-7-6'></td>
+                <td data-index='entry7-7-7'></td>
+                <td data-index='entry7-7-8'></td>
+                <td data-index='entry7-7-9'></td>
+                <td data-index='entry7-7-10'></td>
+                <td data-index='entry7-7-11'></td>
+                <td data-index='entry7-7-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> லக்</td>
+                <td data-index='entry7-8-1'></td>
+                <td data-index='entry7-8-2'></td>
+                <td data-index='entry7-8-3'></td>
+                <td data-index='entry7-8-4'></td>
+                <td data-index='entry7-8-5'></td>
+                <td data-index='entry7-8-6'></td>
+                <td data-index='entry7-8-7'></td>
+                <td data-index='entry7-8-8'></td>
+                <td data-index='entry7-8-9'></td>
+                <td data-index='entry7-8-10'></td>
+                <td data-index='entry7-8-11'></td>
+                <td data-index='entry7-8-12'></td>
+            </tr>
+            <tr>
+                <td class="title"> =</td>
+                <td data-index='entry7-total-1'></td>
+                <td data-index='entry7-total-2'></td>
+                <td data-index='entry7-total-3'></td>
+                <td data-index='entry7-total-4'></td>
+                <td data-index='entry7-total-5'></td>
+                <td data-index='entry7-total-6'></td>
+                <td data-index='entry7-total-7'></td>
+                <td data-index='entry7-total-8'></td>
+                <td data-index='entry7-total-9'></td>
+                <td data-index='entry7-total-10'></td>
+                <td data-index='entry7-total-11'></td>
+                <td data-index='entry7-total-12'></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+
+</html>
